@@ -81,7 +81,7 @@
 		</style>
 	</head>
 	<body>
-		<div class="joinbtn">点击进入微信通话</div>
+		<div class="joinbtn">正在连线加载中中</div>
 		<div class="container c-hide">
 			<div class="btn-wrap clearfix">
 				<div class="btn-j">
@@ -95,11 +95,11 @@
 			</div>
 			<div class="ing c-hide">正在通话中...</div>
 		</div>
-		<audio src="audio/wxmusic.m4a" loop="loop" id="play" autoplay="true">
+		<audio src="audio/wxmusic.m4a" loop="loop" id="play" autoplay="true" preload="auto">
 		</audio>
-		<audio id="jt" src="audio/j.m4a">
+		<audio id="jt" src="audio/j.m4a" preload="auto">
 		</audio>
-		<audio id="gd" src="audio/g.m4a">
+		<audio id="gd" src="audio/g.m4a" preload="auto">
 		</audio>
 		<!-- <audio loop="loop" id="play" autoplay="true">
             <source src="audio/wxmusic.mp3" type="video/mpeg">
@@ -119,42 +119,75 @@
 		<script src="js/index.js"></script>
 		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
 		<script>
+
 			var $joinbtn = $(".joinbtn"), //点击开始通话
 				$bgmusic = $("#play"), //来电背景乐
 				$jt = $("#jt"),	//接听
 				$gd = $("#gd"),	//挂断
 				$container = $(".container");	//电话页面
 
-			var $btnG = $(".btn-g"),
-				$btnJ = $(".btn-j");
-
-			//点击开始通话
-			$joinbtn.click(function(){
-				$bgmusic[0].play();
-				$(this).addClass("c-hide");
-				$container.removeClass("c-hide");
+			//监听音乐是否加载完成
+			var loadbg = false,
+				loadjt = false,
+				loadgd = false;
+			$bgmusic.bind("canplay",function(){
+				loadbg = true;
+				valAll();
+			});
+			$jt.bind("canplay",function(){
+				loadjt = true;
+				valAll();
+			});
+			$gd.bind("canplay",function(){
+				loadgd = true;
+				valAll();
 			});
 
-			//隐藏按钮
-			function hideBtn(){
-				$(".btn-wrap").addClass("c-hide");
-				$(".ing").removeClass("c-hide");
+
+			function valAll(){
+				if(loadbg && loadjt && loadgd){
+					$joinbtn.text("点击进入微信通话");
+					bindEventForAll();
+				}
 			}
 
-			//挂断
-			$btnG.click(function(){
-				$bgmusic[0].pause();
-				$gd[0].play();
 
-				hideBtn();
-			});
-			//接听
-			$btnJ.click(function(){
-				$bgmusic[0].pause();
-				$jt[0].play();
 
-				hideBtn();
-			});
+
+			function bindEventForAll(){
+				var $btnG = $(".btn-g"),
+				$btnJ = $(".btn-j");
+
+				//点击开始通话
+				$joinbtn.click(function(){
+					$bgmusic[0].play();
+					$(this).addClass("c-hide");
+					$container.removeClass("c-hide");
+				});
+
+				
+
+				//隐藏按钮
+				function hideBtn(){
+					$(".btn-wrap").addClass("c-hide");
+					$(".ing").removeClass("c-hide");
+				}
+
+				//挂断
+				$btnG.click(function(){
+					$bgmusic[0].pause();
+					$gd[0].play();
+
+					hideBtn();
+				});
+				//接听
+				$btnJ.click(function(){
+					$bgmusic[0].pause();
+					$jt[0].play();
+
+					hideBtn();
+				});
+			}
 
 
 		</script>
